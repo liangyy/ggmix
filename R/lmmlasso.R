@@ -49,7 +49,8 @@ lmmlasso.fullrank <- function(ggmix_object,
     nlambda = nlambda,
     lambda_min_ratio = lambda_min_ratio,
     eta_init = eta_init,
-    epsilon = epsilon
+    epsilon = epsilon,
+    myweights = myweights
   )
 
   lambda_max <- lamb$sequence[[1]]
