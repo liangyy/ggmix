@@ -51,7 +51,7 @@ kkt_check <- function(eta, sigma2, beta, eigenvalues, x, y, nt,
   # kkt_eta <- gr_eta_lasso_fullrank(eta = eta, sigma2 = sigma2, beta = beta, eigenvalues = eigenvalues, x = x, y = y, nt = nt) < tol.kkt
   kkt_eta <- gr_eta_lasso_fullrank(
     eta = eta, sigma2 = sigma2, beta = beta,
-    eigenvalues = eigenvalues, x = x, y = y, nt = nt
+    eigenvalues = eigenvalues, x = x, y = y, nt = nt, myweights = myweights
   )
 
   # KKT for sigma2
@@ -59,7 +59,7 @@ kkt_check <- function(eta, sigma2, beta, eigenvalues, x, y, nt,
   # kkt_sigma2 <- grr_sigma2(eta = eta, sigma2 = sigma2, beta = beta, eigenvalues = eigenvalues, x = x, y = y, nt = nt) < tol.kkt
   kkt_sigma2 <- grr_sigma2(
     eta = eta, sigma2 = sigma2, beta = beta,
-    eigenvalues = eigenvalues, x = x, y = y, nt = nt
+    eigenvalues = eigenvalues, x = x, y = y, nt = nt, myweights = myweights
   )
 
   # KKT for beta
