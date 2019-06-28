@@ -23,7 +23,7 @@ lmmlasso.default <- function(ggmix_object, ...) {
 
 
 #' @rdname lmmlasso
-lmmlasso.fullrank <- function(ggmix_object,
+lmmlasso.fullrank <- function(ggmix_object, myweights,
                               ...,
                               penalty.factor,
                               lambda,
@@ -39,7 +39,7 @@ lmmlasso.fullrank <- function(ggmix_object,
                               thresh_glmnet, # this is for glmnet
                               epsilon, # this is for ggmix
                               dfmax,
-                              verbose, myweights) {
+                              verbose) {
 
 
   # get lambda sequence -----------------------------------------------------
@@ -154,7 +154,7 @@ lmmlasso.fullrank <- function(ggmix_object,
       )
 
       beta_next <- beta_next_fit$beta[, 2, drop = FALSE]
-
+      
       # fit eta ---------------------------------------------------------------
       eta_next <- stats::optim(
         par = eta_init,
@@ -170,7 +170,7 @@ lmmlasso.fullrank <- function(ggmix_object,
         x = ggmix_object[["x"]],
         y = ggmix_object[["y"]],
         nt = n_design,
-        myweights = myweights,
+        myweights = myweights
       )$par
 
       # fit sigma2 -----------------------------------------------------------
@@ -210,7 +210,8 @@ lmmlasso.fullrank <- function(ggmix_object,
       sigma2 = sigma2_next,
       beta = 1,
       nt = n_design,
-      x = ggmix_object[["y"]]
+      x = ggmix_object[["y"]],
+      myweights = myweights
     )
 
     # intercept only model
@@ -219,7 +220,8 @@ lmmlasso.fullrank <- function(ggmix_object,
       sigma2 = sigma2_next,
       beta = beta_next[1, , drop = FALSE],
       nt = n_design,
-      x = ggmix_object[["x"]][, 1, drop = FALSE]
+      x = ggmix_object[["x"]][, 1, drop = FALSE],
+      myweights = myweights
     )
 
     # model log lik
@@ -227,7 +229,8 @@ lmmlasso.fullrank <- function(ggmix_object,
       eta = eta_next,
       sigma2 = sigma2_next,
       beta = beta_next,
-      nt = n_design
+      nt = n_design,
+      myweights = myweights
     )
     # print(model_loglik)
 

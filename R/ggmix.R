@@ -123,6 +123,7 @@ ggmix <- function(x, y,
                   n_nonzero_eigenvalues,
                   n_zero_eigenvalues,
                   myweights = NULL,
+                  customed_intercept = NULL,
                   estimation = c("full", "low"),
                   penalty = c("lasso", "gglasso"),
                   group,
@@ -143,7 +144,10 @@ ggmix <- function(x, y,
 
   # Check input -------------------------------------------------------------
   if(is.null(myweights)) {
-    myweights = rep(1, nrow(X))
+    myweights = rep(1, nrow(x))
+  }
+  if(is.null(customed_intercept)) {
+    customed_intercept = rep(1, nrow(x))
   }
   estimation <- tryCatch(match.arg(estimation),
     error = function(c) {
@@ -365,7 +369,7 @@ ggmix <- function(x, y,
     ggmix_data_object <- switch(corr_type,
       kinship = new_fullrank_kinship(x = x, y = y, kinship = kinship),
       K = new_fullrank_K(x = x, y = y, K = K),
-      UD = new_fullrank_UD(x = x, y = y, U = U, D = D)
+      UD = new_fullrank_UD(x = x, y = y, U = U, D = D, customed_intercept)
     )
   }
 

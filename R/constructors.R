@@ -68,8 +68,8 @@ new_fullrank_K <- function(x, y, K) {
 
 #' @rdname ggmix_data_object
 #' @export
-new_fullrank_UD <- function(x, y, U, D) {
-  x <- cbind("(Intercept)" = 1, x)
+new_fullrank_UD <- function(x, y, U, D, customed_intercept) {
+  x <- cbind("(Intercept)" = customed_intercept, x)
   utx <- crossprod(U, x)
   uty <- crossprod(U, y)
 

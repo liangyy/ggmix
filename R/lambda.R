@@ -22,11 +22,10 @@ lambdalasso.default <- function(ggmix_object, ...) {
 }
 
 #' @rdname lambdalasso
-lambdalasso.fullrank <- function(ggmix_object,
+lambdalasso.fullrank <- function(ggmix_object, myweights,
                                  ...,
                                  penalty.factor,
                                  lambda_min_ratio,
-                                 myweights,
                                  epsilon = 1e-14,
                                  tol.kkt = 1e-9,
                                  eta_init = 0.5,
