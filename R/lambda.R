@@ -90,7 +90,7 @@ lambdalasso.fullrank <- function(ggmix_object,
       x = utx,
       y = uty,
       nt = n,
-      myweights = myweights, 
+      myweights = myweights
     )$par
 
     # weights
