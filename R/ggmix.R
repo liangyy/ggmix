@@ -122,6 +122,7 @@ ggmix <- function(x, y,
                   K,
                   n_nonzero_eigenvalues,
                   n_zero_eigenvalues,
+                  myweights = NULL,
                   estimation = c("full", "low"),
                   penalty = c("lasso", "gglasso"),
                   group,
@@ -141,7 +142,9 @@ ggmix <- function(x, y,
   this.call <- match.call()
 
   # Check input -------------------------------------------------------------
-
+  if(is.null(myweights)) {
+    myweights = rep(1, nrow(X))
+  }
   estimation <- tryCatch(match.arg(estimation),
     error = function(c) {
       stop(strwrap("Estimation method should be
@@ -187,14 +190,14 @@ ggmix <- function(x, y,
   if (is.null(np_design) | (np_design[2] <= 1)) {
     stop("x should be a matrix with 2 or more columns")
   }
-  
+
   # note that p_design doesn't contain the intercept
   # whereas the x in the ggmix_object will have the intercept
   n_design <- np_design[[1]]
   p_design <- np_design[[2]]
-  
+
   dfmax <- as.double(dfmax)
-  
+
   is_kinship <- !missing(kinship)
   is_UD <- !missing(U) & !missing(D)
   is_K <- !missing(K)
@@ -421,7 +424,8 @@ ggmix <- function(x, y,
       thresh_glmnet = thresh_glmnet, # this is for glmnet
       epsilon = epsilon,
       dfmax = dfmax,
-      verbose = verbose
+      verbose = verbose,
+      myweights = myweights
     )
   } else if (penalty == "gglasso") {
     # not yet implemented
