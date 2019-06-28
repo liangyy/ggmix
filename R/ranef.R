@@ -111,8 +111,8 @@ bi_lassofullrank <- function(eta, beta, eigenvalues, eigenvectors, x, y) {
 
 # this is for future observations used by predict.ggmix_fit when type="individual"
 # this contains the random part only, i.e. the 2nd part of eq 35 in manuscript section 3.7
-bi_future_lassofullrank <- function(eta, beta, eigenvalues, eigenvectors, x, y, covariance) {
-  di <- 1 + eta * (eigenvalues - 1)
+bi_future_lassofullrank <- function(eta, beta, eigenvalues, eigenvectors, x, y, covariance, myweights) {
+  di <- 1 / myweights + eta * (eigenvalues - 1 / myweights)
   D_tilde_inv <- diag(1 / di)
   (eta) * as.vector(covariance %*% eigenvectors %*% D_tilde_inv %*% (y - x %*% beta))
 }

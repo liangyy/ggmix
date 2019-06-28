@@ -27,7 +27,7 @@ logliklasso.default <- function(ggmix_object, ...) {
 #' @rdname logliklasso
 logliklasso.fullrank <- function(ggmix_object,
                                  ...,
-                                 eta, sigma2, beta, nt, x, y) {
+                                 eta, sigma2, beta, nt, x, y, myweights) {
 
   # this returns the log-likelihood
 
@@ -45,7 +45,7 @@ logliklasso.fullrank <- function(ggmix_object,
 
   eigenvalues <- ggmix_object[["D"]]
 
-  kernel <- 1 + eta * (eigenvalues - 1)
+  kernel <- 1 / myweights + eta * (eigenvalues - 1 / myweights)
 
   -1 * (
     (nt / 2) * log(2 * pi) +

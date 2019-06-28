@@ -18,7 +18,7 @@
 #'   of sigma2 and beta0, respectively
 #' @export
 kkt_check <- function(eta, sigma2, beta, eigenvalues, x, y, nt,
-                                    lambda, tol.kkt = 1e-3) {
+                                    lambda, myweights, tol.kkt = 1e-3) {
 
   # eta = eta_next; sigma2 = sigma2_next;
   # beta = beta_next;
@@ -29,7 +29,7 @@ kkt_check <- function(eta, sigma2, beta, eigenvalues, x, y, nt,
   # lambda = lambda; tol.kkt = 0.000001
   # =======================
 
-  di <- 1 + eta * (eigenvalues - 1)
+  di <- 1 / myweights + eta * (eigenvalues - 1 / myweights)
   wi <- (1 / sigma2) * (1 / di)
 
 
@@ -101,15 +101,15 @@ kkt_check <- function(eta, sigma2, beta, eigenvalues, x, y, nt,
 }
 
 #' @rdname kkt_check
-grr_sigma2 <- function(eta, sigma2, beta, eigenvalues, x, y, nt) {
-  di <- 1 + eta * (eigenvalues - 1)
+grr_sigma2 <- function(eta, sigma2, beta, eigenvalues, x, y, nt, myweights) {
+  di <- 1 / myweights + eta * (eigenvalues - 1 / myweights)
 
   sigma2 - (1 / nt) * sum((((y - x %*% beta)^2) / di))
 }
 
 #' @rdname kkt_check
-grr_beta0 <- function(eta, sigma2, beta, eigenvalues, x, y, nt) {
-  di <- 1 + eta * (eigenvalues - 1)
+grr_beta0 <- function(eta, sigma2, beta, eigenvalues, x, y, nt, myweights) {
+  di <- 1 / myweights + eta * (eigenvalues - 1 / myweights)
   wi <- (1 / sigma2) * diag(1 / di)
 
   as.numeric(crossprod(x[, 1, drop = FALSE], wi) %*% (y - x %*% beta))

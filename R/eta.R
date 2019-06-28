@@ -5,8 +5,8 @@
 #' @seealso \code{\link{logliklasso}}, \code{\link{kkt_check}}, \code{\link{lmmlasso}}
 #' @inheritParams logliklasso
 #' @inheritParams kkt_check
-gr_eta_lasso_fullrank <- function(eta, sigma2, beta, eigenvalues, x, y, nt) {
-  di <- 1 + eta * (eigenvalues - 1)
+gr_eta_lasso_fullrank <- function(eta, sigma2, beta, eigenvalues, x, y, nt, myweights) {
+  di <- 1 / myweights + eta * (eigenvalues - 1 / myweights)
 
   (1 / 2) * sum(((eigenvalues - 1) / di) * (1 - (((y - x %*% beta)^2) / (sigma2 * di))))
 }
@@ -14,11 +14,11 @@ gr_eta_lasso_fullrank <- function(eta, sigma2, beta, eigenvalues, x, y, nt) {
 
 
 #' @rdname gr_eta_lasso_fullrank
-fn_eta_lasso_fullrank <- function(eta, sigma2, beta, eigenvalues, x, y, nt) {
+fn_eta_lasso_fullrank <- function(eta, sigma2, beta, eigenvalues, x, y, nt, myweights) {
 
   # this is based on the negative log-lik
 
-  di <- 1 + eta * (eigenvalues - 1)
+  di <- 1 / myweights + eta * (eigenvalues - 1 / myweights)
 
   (nt / 2) * log(2 * pi) +
     (nt / 2) * log(sigma2) +

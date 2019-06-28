@@ -49,8 +49,11 @@
 #'   \code{\link[bnpsd]{q1dc}}, \code{\link[bnpsd]{rbnpsd}}
 gen_structured_model <- function(n, p_design, p_kinship, k, s, Fst, b0, nPC = 10,
                                  eta, sigma2, geography = c("ind", "1d", "circ"),
-                                 percent_causal, percent_overlap, train_tune_test = c(0.6, 0.2, 0.2)) {
+                                 percent_causal, percent_overlap, train_tune_test = c(0.6, 0.2, 0.2), myweights = NULL) {
 
+  if(is.null(myweights)) {
+    myweights = rep(1, n)
+  }
   # p_design:
   # p_kinship:
   # k:	N
@@ -325,7 +328,7 @@ gen_structured_model <- function(n, p_design, p_kinship, k, s, Fst, b0, nPC = 10
   }
 
   P <- MASS::mvrnorm(1, mu = rep(0, n), Sigma = tt)
-  E <- MASS::mvrnorm(1, mu = rep(0, n), Sigma = (1 - eta) * sigma2 * diag(n))
+  E <- MASS::mvrnorm(1, mu = rep(0, n), Sigma = (1 - eta) * sigma2 * diag(1 / myweights))
   # y <- mu + sigma * matrix(rnorm(nsim * n), n, nsim)
   # y <- b0 + mu + t(P) + t(E)
   # y <- MASS::mvrnorm(1, mu = mu, Sigma = eta * sigma2 * kin + (1 - eta) * sigma2 * diag(n))

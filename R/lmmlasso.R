@@ -39,7 +39,7 @@ lmmlasso.fullrank <- function(ggmix_object,
                               thresh_glmnet, # this is for glmnet
                               epsilon, # this is for ggmix
                               dfmax,
-                              verbose) {
+                              verbose, myweights) {
 
 
   # get lambda sequence -----------------------------------------------------
@@ -134,7 +134,7 @@ lmmlasso.fullrank <- function(ggmix_object,
       Theta_init <- c(as.vector(beta_init), eta_init, sigma2_init)
 
       # observation weights
-      di <- 1 + eta_init * (ggmix_object[["D"]] - 1)
+      di <- 1 / myweights + eta_init * (ggmix_object[["D"]] - 1 / myweights)
       wi <- (1 / sigma2_init) * (1 / di)
 
 
@@ -168,7 +168,8 @@ lmmlasso.fullrank <- function(ggmix_object,
         eigenvalues = ggmix_object[["D"]],
         x = ggmix_object[["x"]],
         y = ggmix_object[["y"]],
-        nt = n_design
+        nt = n_design,
+        myweights = myweights,
       )$par
 
       # fit sigma2 -----------------------------------------------------------

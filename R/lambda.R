@@ -26,6 +26,7 @@ lambdalasso.fullrank <- function(ggmix_object,
                                  ...,
                                  penalty.factor,
                                  lambda_min_ratio,
+                                 myweights,
                                  epsilon = 1e-14,
                                  tol.kkt = 1e-9,
                                  eta_init = 0.5,
@@ -41,7 +42,7 @@ lambdalasso.fullrank <- function(ggmix_object,
   p <- np[[2]] - 1
 
   # weights
-  di <- 1 + eta_init * (eigenvalues - 1)
+  di <- 1 / myweights + eta_init * (eigenvalues - 1 / myweights)
 
   # initial value for beta0
   beta0_init <- (sum(utx[, 1] * uty / di)) / (sum(utx[, 1]^2 / di))
@@ -88,11 +89,12 @@ lambdalasso.fullrank <- function(ggmix_object,
       eigenvalues = eigenvalues,
       x = utx,
       y = uty,
-      nt = n
+      nt = n,
+      myweights = myweights, 
     )$par
 
     # weights
-    di <- 1 + eta_next * (eigenvalues - 1)
+    di <- 1 / myweights + eta_next * (eigenvalues - 1 / myweights)
 
     # next value for beta0
     beta0_next <- (sum(utx[, 1] * uty / di)) / (sum(utx[, 1]^2 / di))
@@ -122,7 +124,7 @@ lambdalasso.fullrank <- function(ggmix_object,
 
   # eta_next
   # sigma2_next
-  di <- 1 + eta_next * (eigenvalues - 1)
+  di <- 1 / myweights + eta_next * (eigenvalues - 1 / myweights)
   wi <- (1 / sigma2_next) * (1 / di)
   if (any(wi < 0)) stop("weights are negative")
 
