@@ -108,7 +108,8 @@ lmmlasso.fullrank <- function(ggmix_object, myweights,
   sigma2_init <- sigma2lasso(ggmix_object,
     n = n_design,
     eta = eta_init,
-    beta = beta_init
+    beta = beta_init,
+    myweights = myweights
   )
 
 
@@ -154,16 +155,38 @@ lmmlasso.fullrank <- function(ggmix_object, myweights,
       )
 
       beta_next <- beta_next_fit$beta[, 2, drop = FALSE]
-      
+
       # fit eta ---------------------------------------------------------------
-      eta_next <- stats::optim(
-        par = eta_init,
-        fn = fn_eta_lasso_fullrank,
-        gr = gr_eta_lasso_fullrank,
-        method = "L-BFGS-B",
+      ### MY COMMENT
+      ### let eta = exp(-e)
+      ### d eta / d e = -exp(-e)
+      ### d l / d e = (d l / d eta) * (d eta / d e) = (d l / d eta) * (-eta)
+      ### END MY COMMENT
+      e = eta2e(eta_init)
+      # eta_next <- stats::optim(
+      #   par = eta_init,
+      #   fn = fn_eta_lasso_fullrank,
+      #   gr = gr_eta_lasso_fullrank,
+      #   method = "L-BFGS-B",
+      #   control = list(fnscale = 1),
+      #   lower = 0.01,
+      #   upper = 0.99,
+      #   sigma2 = sigma2_init,
+      #   beta = beta_next,
+      #   eigenvalues = ggmix_object[["D"]],
+      #   x = ggmix_object[["x"]],
+      #   y = ggmix_object[["y"]],
+      #   nt = n_design,
+      #   myweights = myweights
+      # )$par
+      e_next <- stats::optim(
+        par = e,  # e_init
+        fn = fn_e_lasso_fullrank,  # fn_eta_lasso_fullrank,
+        gr = gr_e_lasso_fullrank,  # gr_eta_lasso_fullrank,
+        method = 'L-BFGS-B',  # "L-BFGS-B",
         control = list(fnscale = 1),
-        lower = 0.01,
-        upper = 0.99,
+        lower = 1e-7,  # 0.01
+        upper = 10,  # 0.09
         sigma2 = sigma2_init,
         beta = beta_next,
         eigenvalues = ggmix_object[["D"]],
@@ -172,12 +195,13 @@ lmmlasso.fullrank <- function(ggmix_object, myweights,
         nt = n_design,
         myweights = myweights
       )$par
-
+      eta_next = e2eta(e_next)
       # fit sigma2 -----------------------------------------------------------
       sigma2_next <- sigma2lasso(ggmix_object,
         n = n_design,
         beta = beta_next,
-        eta = eta_next
+        eta = eta_next,
+        myweights = myweights
       )
 
       Theta_next <- c(as.vector(beta_next), eta_next, sigma2_next)

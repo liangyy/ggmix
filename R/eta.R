@@ -11,6 +11,12 @@ gr_eta_lasso_fullrank <- function(eta, sigma2, beta, eigenvalues, x, y, nt, mywe
   (1 / 2) * sum(((eigenvalues - 1) / di) * (1 - (((y - x %*% beta)^2) / (sigma2 * di))))
 }
 
+gr_e_lasso_fullrank <- function(e, sigma2, beta, eigenvalues, x, y, nt, myweights) {
+  eta = e2eta(e)
+  gr_eta_lasso_fullrank(eta, sigma2, beta, eigenvalues, x, y, nt, myweights) * (-eta)
+}
+
+
 
 
 #' @rdname gr_eta_lasso_fullrank
@@ -24,4 +30,17 @@ fn_eta_lasso_fullrank <- function(eta, sigma2, beta, eigenvalues, x, y, nt, mywe
     (nt / 2) * log(sigma2) +
     0.5 * sum(log(di)) +
     (1 / (2 * sigma2)) * sum((y - x %*% beta)^2 / di)
+}
+
+fn_e_lasso_fullrank <- function(e, sigma2, beta, eigenvalues, x, y, nt, myweights) {
+  eta = e2eta(e)
+  fn_eta_lasso_fullrank(eta, sigma2, beta, eigenvalues, x, y, nt, myweights)
+}
+
+e2eta = function(e) {
+  exp(-e)
+}
+
+eta2e = function(eta) {
+  -log(eta)
 }

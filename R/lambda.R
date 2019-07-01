@@ -75,14 +75,36 @@ lambdalasso.fullrank <- function(ggmix_object, myweights,
     Theta_init <- c(beta_init, eta_init, sigma2_init)
 
     # fit eta
-    eta_next <- stats::optim(
-      par = eta_init,
-      fn = fn_eta_lasso_fullrank,
-      gr = gr_eta_lasso_fullrank,
-      method = "L-BFGS-B",
+    ### MY COMMENT
+    ### let eta = exp(-e)
+    ### d eta / d e = -exp(-e)
+    ### d l / d e = (d l / d eta) * (d eta / d e) = (d l / d eta) * (-eta)
+    ### END MY COMMENT
+    e = eta2e(eta_init)
+    # eta_next <- stats::optim(
+    #   par = eta_init,
+    #   fn = fn_eta_lasso_fullrank,
+    #   gr = gr_eta_lasso_fullrank,
+    #   method = "L-BFGS-B",
+    #   control = list(fnscale = 1),
+    #   lower = .01,
+    #   upper = .99,
+    #   sigma2 = sigma2_init,
+    #   beta = beta_init,
+    #   eigenvalues = eigenvalues,
+    #   x = utx,
+    #   y = uty,
+    #   nt = n,
+    #   myweights = myweights
+    # )$par
+    e_next <- stats::optim(
+      par = e,  # e_init
+      fn = fn_e_lasso_fullrank,  # fn_eta_lasso_fullrank,
+      gr = gr_e_lasso_fullrank,  # gr_eta_lasso_fullrank,
+      method = 'L-BFGS-B',  # "L-BFGS-B",
       control = list(fnscale = 1),
-      lower = .01,
-      upper = .99,
+      lower = 1e-7,  # 0.01
+      upper = 10,  # 0.09
       sigma2 = sigma2_init,
       beta = beta_init,
       eigenvalues = eigenvalues,
@@ -91,6 +113,7 @@ lambdalasso.fullrank <- function(ggmix_object, myweights,
       nt = n,
       myweights = myweights
     )$par
+    eta_next = e2eta(e_next)
 
     # weights
     di <- 1 / myweights + eta_next * (eigenvalues - 1 / myweights)
